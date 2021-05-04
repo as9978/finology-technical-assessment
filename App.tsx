@@ -1,21 +1,42 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React from "react";
+import { ThemeProvider } from "@shopify/restyle";
+import { createStackNavigator } from "@react-navigation/stack";
+
+import { LoadAssets } from "./src/components";
+import { theme } from "./src/components/Theme";
+import { SafeAreaProvider } from "react-native-safe-area-context";
+import { AppRoutes } from "./src/components/Navigation";
+import { AuthenticationNavigator } from "./src/Authentication";
+import { HomeNavigator } from "./src/Home";
+
+const assets: number[] = [];
+
+const fonts = {
+  "Poppins-Bold": require("./assets/fonts/Poppins-Bold.ttf"),
+  "Poppins-Regular": require("./assets/fonts/Poppins-Regular.ttf"),
+};
+
+const AppStack = createStackNavigator<AppRoutes>();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <ThemeProvider {...{ theme }}>
+      <LoadAssets {...{ fonts, assets }}>
+        <SafeAreaProvider>
+          <AppStack.Navigator
+            headerMode="none"
+            screenOptions={() => ({
+              cardStyle: { backgroundColor: theme.colors.white },
+            })}
+          >
+            <AppStack.Screen
+              name="Authentication"
+              component={AuthenticationNavigator}
+            />
+            <AppStack.Screen name="Home" component={HomeNavigator} />
+          </AppStack.Navigator>
+        </SafeAreaProvider>
+      </LoadAssets>
+    </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
